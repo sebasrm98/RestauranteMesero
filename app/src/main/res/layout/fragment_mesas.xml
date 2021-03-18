@@ -19,8 +19,8 @@
 
             <ImageView
                 android:id="@+id/imageView4"
-                android:layout_width="385dp"
-                android:layout_height="515dp"
+                android:layout_width="413dp"
+                android:layout_height="646dp"
 
                 android:scaleType="centerCrop"
                 android:src="@mipmap/fondomdeso"

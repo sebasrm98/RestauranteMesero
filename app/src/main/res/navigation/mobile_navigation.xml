@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.restaurantemeseros.interfaz.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_platosMesaFragment"
+            app:destination="@id/platosMesaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pedidosMesasFragment"
+        android:name="com.example.restaurantemeseros.interfaz.PedidosMesasFragment"
+        android:label="fragment_pedidos_mesas"
+        tools:layout="@layout/fragment_pedidos_mesas" >
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_mesasFragment"
+            app:destination="@id/mesasFragment" />
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_platosMesaFragment"
+            app:destination="@id/platosMesaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mesasFragment"
+        android:name="com.example.restaurantemeseros.interfaz.MesasFragment"
+        android:label="fragment_mesas"
+        tools:layout="@layout/fragment_mesas" >
+        <action
+            android:id="@+id/action_mesasFragment_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
+        <action
+            android:id="@+id/action_mesasFragment_to_listaMesasFragment"
+            app:destination="@id/listaMesasFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listaMesasFragment"
+        android:name="com.example.restaurantemeseros.interfaz.ListaMesasFragment"
+        android:label="fragment_lista_mesas"
+        tools:layout="@layout/fragment_lista_mesas" >
+        <action
+            android:id="@+id/action_listaMesasFragment_to_mesasFragment"
+            app:destination="@id/mesasFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/platosMesaFragment"
+        android:name="com.example.restaurantemeseros.interfaz.PlatosMesaFragment"
+        android:label="fragment_platos_mesa"
+        tools:layout="@layout/fragment_platos_mesa" >
+        <action
+            android:id="@+id/action_platosMesaFragment_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
+        <action
+            android:id="@+id/action_platosMesaFragment_to_listaPedidosPlatosFragment"
+            app:destination="@id/listaPedidosPlatosFragment" />
+        <action
+            android:id="@+id/action_platosMesaFragment_to_menuPlatosFragment"
+            app:destination="@id/menuPlatosFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listaPedidosPlatosFragment"
+        android:name="com.example.restaurantemeseros.interfaz.ListaPedidosPlatosFragment"
+        android:label="fragment_lista_pedidos_platos"
+        tools:layout="@layout/fragment_lista_pedidos_platos" >
+        <action
+            android:id="@+id/action_listaPedidosPlatosFragment_to_platosMesaFragment"
+            app:destination="@id/platosMesaFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/menuPlatosFragment"
+        android:name="com.example.restaurantemeseros.interfaz.MenuPlatosFragment"
+        android:label="fragment_menu_platos"
+        tools:layout="@layout/fragment_menu_platos" >
+        <action
+            android:id="@+id/action_menuPlatosFragment_to_platosMesaFragment"
+            app:destination="@id/platosMesaFragment" />
+        <action
+            android:id="@+id/action_menuPlatosFragment_to_listaMenuPlatoFragment"
+            app:destination="@id/listaMenuPlatoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listaMenuPlatoFragment"
+        android:name="com.example.restaurantemeseros.interfaz.ListaMenuPlatoFragment"
+        android:label="fragment_lista_menu_plato"
+        tools:layout="@layout/fragment_lista_menu_plato" >
+        <action
+            android:id="@+id/action_listaMenuPlatoFragment_to_menuPlatosFragment"
+            app:destination="@id/menuPlatosFragment" />
+    </fragment>
+
+</navigation>

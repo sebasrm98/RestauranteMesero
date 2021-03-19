@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -178,7 +179,7 @@ public class MesasFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-
+                Navigation.findNavController(v).navigate(R.id.QRmesaFragment);
             }
         });
         mDialog = new Dialog (getContext ());

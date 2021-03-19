@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -33,6 +35,8 @@ import com.example.restaurantemeseros.Abtract.InterfazFragamen;
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaMesa;
 import com.example.restaurantemeseros.mundo.Mesa;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -179,12 +183,33 @@ public class MesasFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                Navigation.findNavController(v).navigate(R.id.QRmesaFragment);
+                IntentIntegrator integrator = IntentIntegrator.forSupportFragment(MesasFragment.this);
+                integrator.setOrientationLocked(false);
+                integrator.setPrompt("Scan QR code");
+                integrator.setBeepEnabled(false);
+                integrator.initiateScan();
             }
         });
         mDialog = new Dialog (getContext ());
         return v;
 
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+
+                String datos = result.getContents();
+                //txt.setText(datos);
+                // Toast.makeText(getContext(), "Scanned : " + result.getContents(), Toast.LENGTH_LONG).show();
+
+
+
+            }
+        }
     }
 
     public void buscarMesaDesocupada()

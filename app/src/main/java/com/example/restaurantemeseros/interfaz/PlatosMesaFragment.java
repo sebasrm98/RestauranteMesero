@@ -3,6 +3,7 @@ package com.example.restaurantemeseros.interfaz;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,7 +77,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
     private boolean isDropped = false;
     private MenuPlatosFragment.Listener mListener;
     private TextView numeroMesa;
-    private ImageButton btnActualizarPedido;
+    private ImageButton btnActualizarPedido, animacionMesas;
     private ImageButton factura;
     private Dialog mDialog;
 
@@ -100,6 +102,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         View v = inflater.inflate(R.layout.fragment_platos_mesa, container, false);
         this.pedidoFactura = new Factura();
         this.listaPedidos = v.findViewById(R.id.lista_pedidos);
+        animacionMesas= v.findViewById(R.id.imageButton);
       //  this.factura = v.findViewById(R.id.imagenFactura);
         this.requestQueue = VolleySingleton.getInstance(getContext()).getRequestQueue();
         this.adaptadorListaPedidos = new AdaptadorListaPedidos(getContext(), this.pedidoFactura.getPlatos());
@@ -114,6 +117,14 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
 
             }
         });*/
+
+        animacionMesas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Navigation.findNavController(v).navigate(R.id.mesasFragment);
+
+            }
+        });
         this.adaptadorListaPedidos.setOnclickListener (new View.OnClickListener ()
         {
             @Override
@@ -135,15 +146,17 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                 numeroMesa.setText(mesa.getNumero());
                 int idmesa = mesa.getIdmesa();
                 Map<String, String> params = new HashMap<String, String>();
-                Toast.makeText(getContext(), "" + idmesa, Toast.LENGTH_SHORT).show();
                 params.put("buscarPlatoMesa", idmesa + "");
                 JSONObject parameters = new JSONObject(params);
                 String url = "http://openm.co/consultas/pedidos.php";
+                Toast.makeText(getContext(), "Aqui estoy estoy llegando", Toast.LENGTH_LONG).show();
+                final ProgressDialog loading = ProgressDialog.show(getContext (),"Buscando mesa...","Espere por favor...",false,false);
 
                 jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response)
                     {
+                        loading.dismiss ();
                         try {
                             listaPedidos.setAdapter(adaptadorListaPedidos);
                             pedidoFactura.limpiarLista();
@@ -179,8 +192,8 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                                         usuarios_apellidos,
                                         usuarios_telefono,
                                         usuarios_cargo);
-
-                                for (int i = 0; i < datos.length(); i++)
+                                String nombrePlato=datos.getJSONObject(0).getString ("platos_nombre");
+                                for (int i = 0; i < datos.length() && !nombrePlato.equals ("null"); i++)
                                 {
                                     JSONObject plato = datos.getJSONObject(i);
                                     int pedidos_cantidad = plato.getInt("pedidos_cantidad");
@@ -216,6 +229,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
+                        loading.dismiss ();
                     }
                 });
                 requestQueue.add(jsonRequest);

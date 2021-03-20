@@ -1,12 +1,14 @@
 package com.example.restaurantemeseros.interfaz;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -14,9 +16,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -34,7 +38,9 @@ import com.android.volley.toolbox.Volley;
 import com.example.restaurantemeseros.Abtract.InterfazFragamen;
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaMesa;
+import com.example.restaurantemeseros.adaptador.VolleySingleton;
 import com.example.restaurantemeseros.mundo.Mesa;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -45,13 +51,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MesasFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MesasFragment extends Fragment {
+public class MesasFragment extends BottomSheetDialogFragment {
 
     protected RequestQueue requestQueue;
     protected JsonRequest jsonRequest;
@@ -67,7 +75,7 @@ public class MesasFragment extends Fragment {
     private int cantMesas;
     private Activity actividad;
     private InterfazFragamen interfazFragamen;
-    ImageButton agregarMesa;
+    ImageButton agregarMesa,animacionMesas;
     Dialog mDialog;
     TextView numeroMesa;
 
@@ -76,6 +84,7 @@ public class MesasFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
+    private String idEmpleados;
 
     public MesasFragment()
     {
@@ -107,12 +116,13 @@ public class MesasFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate (R.layout.fragment_mesas, container, false);
-
+        recuperarPreferencias();
         this.agregarMesa = v.findViewById (R.id.AgregarPedido);
         this.buscarMesa = v.findViewById (R.id.searchBuscarPlato);
         this.listaMesas = v.findViewById (R.id.listaMesas);
+        animacionMesas=v.findViewById (R.id.imageButton);
        // this.mesasDesocupadas = v.findViewById (R.id.listaMesasDesocupadas);
-        this.requestQueue = Volley.newRequestQueue (getContext ());
+        this.requestQueue = VolleySingleton.getInstance(getContext()).getRequestQueue();
         this.mesasDes = new ArrayList<Mesa> ();
         this.mesasDesAux = new ArrayList<Mesa> ();
         this.mesas = new ArrayList<Mesa> ();
@@ -123,12 +133,9 @@ public class MesasFragment extends Fragment {
         this.listaMesas.setAdapter(adaptadorListaMesa);
         this.listaMesas.setLayoutManager (new GridLayoutManager(getContext (), 3));
 
+
 /*
         new Timer ().scheduleAtFixedRate(new TimerTask ()
-=======
-
-       /* new Timer ().scheduleAtFixedRate(new TimerTask ()
->>>>>>> a12abf48ffb93f4cfe4ed5d230620ffc7a720460
         {
             @Override
             public void run()
@@ -172,9 +179,13 @@ public class MesasFragment extends Fragment {
             public void onClick(View v)
             {
                 Mesa mesa = mesas.get (listaMesas.getChildAdapterPosition (v));
+
+                replegarMesa();
+                Toast.makeText(getContext(), "Has seleccionado la mesa "+mesa.getIdmesa (), Toast.LENGTH_LONG).show();
                 Bundle bundleEnvio = new Bundle ();
                 bundleEnvio.putSerializable ("mesa", mesa);
                 getParentFragmentManager ().setFragmentResult ("key", bundleEnvio);
+                getParentFragmentManager().popBackStack();
 
             }
         });
@@ -196,20 +207,66 @@ public class MesasFragment extends Fragment {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if(result != null) {
-            if(result.getContents() == null) {
+        if(result != null)
+        {
+
+            if(result.getContents() == null)
+            {
                 Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_LONG).show();
-            } else {
-
-                String datos = result.getContents();
-                //txt.setText(datos);
-                // Toast.makeText(getContext(), "Scanned : " + result.getContents(), Toast.LENGTH_LONG).show();
-
-
-
+            } else
+            {
+                String datos = result.getContents().trim ();
+                System.out.println (datos.replace ("tel:",""));
+                buscarMesa(datos.replace ("tel:",""));
             }
         }
+    }
+    public void buscarMesa(String idmesa)
+    {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put ("buscarUnaMesa", idmesa);
+        JSONObject parameters = new JSONObject (params);
+        String url = "https://openm.co/consultas/mesas.php";
+        final ProgressDialog loading = ProgressDialog.show(getContext (),"Buscando mesa...","Espere por favor...",false,false);
+
+        jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
+        {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                loading.dismiss ();
+                try
+                {
+                    JSONArray datos = response.getJSONArray ("datos");
+
+                    if (datos.getJSONObject (0).getString ("estado").equals ("Desocupada"))
+                    {
+                        JSONObject mesa = datos.getJSONObject (0);
+                        String estado = mesa.getString ("estado");
+                        int id = mesa.getInt ("idmesas");
+                        String numero = mesa.getString ("numero");
+                        String codigoQR = mesa.getString ("codigoQR");
+                        Mesa m = new Mesa (id, numero, codigoQR, estado);
+                        crearPedido(m);
+                    }else
+                    {
+                        Toast.makeText(getContext(), "La mesa esta ocupada", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace ();
+                }
+            }
+        }, new Response.ErrorListener () {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace ();
+            }
+        });
+
+        jsonRequest.setRetryPolicy (new DefaultRetryPolicy(0, -1, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        requestQueue.add (jsonRequest);
     }
 
     public void buscarMesaDesocupada()
@@ -218,11 +275,12 @@ public class MesasFragment extends Fragment {
         Map<String, String> params = new HashMap<String, String>();
         params.put ("buscarMesasDesocupadas", "Mes");
         JSONObject parameters = new JSONObject (params);
-        String url = "https://192.168.0.3/restaurante/pedidos.php";
+        String url = "https://openm.co/consultas/pedidos.php";
 
         jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject> () {
             @Override
-            public void onResponse(JSONObject response) {
+            public void onResponse(JSONObject response)
+            {
                 try {
 
                     JSONArray datos = response.getJSONArray ("datos");
@@ -239,7 +297,6 @@ public class MesasFragment extends Fragment {
 
                     if (mesasDesAux.size () != cantMesas) {
                         mesasDes.clear ();
-                        String numero = mesasDesAux.get (mesasDesAux.size () - 1).getNumero ();
                         mesasDes.addAll (mesasDesAux);
                         cantMesas = mesasDes.size ();
                     }
@@ -314,8 +371,88 @@ public class MesasFragment extends Fragment {
             }
         });
         requestQueue.add(jsonRequest);
-    }
 
+    }
+    private void crearPedido(Mesa mesa)
+    {
+        final String[] miObservacion = {""};
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
+        builder.setTitle("Title");
+
+        final TextView input = new EditText(getContext ());
+        input.setText ("¿Desea realizar un pedido en esta mesa?");
+        builder.setView(input);
+        final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
+
+        builder.setPositiveButton("Si", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put ("crearPedido", "true");
+                params.put ("idmesa", mesa.getIdmesa ()+"");
+                params.put ("idempleado", idEmpleados+"");
+                JSONObject parameters = new JSONObject (params);
+                String url = "https://openm.co/consultas/pedidos.php";
+                jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
+                {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        mesasAux.add(mesa);
+                        loading.dismiss ();
+                        Toast.makeText (getContext (), "Pedido creado", Toast.LENGTH_SHORT).show ();
+                        replegarMesa();
+                        Bundle bundleEnvio = new Bundle ();
+                        bundleEnvio.putSerializable ("mesa", mesa);
+                        getParentFragmentManager ().setFragmentResult ("key", bundleEnvio);
+                        dialog.cancel();
+                    }
+                }, new Response.ErrorListener () {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace ();
+                    }
+                });
+                int socketTimeout = 0;
+                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+                jsonRequest.setRetryPolicy (policy);
+                requestQueue.add (jsonRequest);
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                dialog.cancel();
+            }
+        });
+
+        builder.show ();
+    }
+    private void recuperarPreferencias()
+    {
+        SharedPreferences preferences= getContext ().getSharedPreferences("preferenciasLogin", Context.MODE_PRIVATE);
+        boolean sesion=preferences.getBoolean("sesion",false);
+        if(sesion)
+        {
+            this.idEmpleados=preferences.getString("idEmpleados", "No hay nada");
+
+        }
+    }
+    private void replegarMesa()
+    {/*
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            getActivity ().onBackPressed();
+        }*/
+       // getFragmentManager().beginTransaction().hide (MesasFragment.this).commit();
+    }
 
 
     public void onAttach(Context context)

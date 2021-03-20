@@ -76,14 +76,6 @@
         tools:layout_editor_absoluteX="343dp"
         tools:layout_editor_absoluteY="678dp" />
 
-    <fragment
-        android:id="@+id/fragment2"
-        android:name="com.example.restaurantemeseros.interfaz.MesasFragment"
-        android:layout_width="414dp"
-        android:layout_height="78dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
-
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="88dp"

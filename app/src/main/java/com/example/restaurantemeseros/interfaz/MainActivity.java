@@ -36,15 +36,24 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
-    TextView nombreUsuario;
-    ImageButton menu,agregarPedido,pedidos;
 
+    TextView nick,nombreUsuario,apellidoUsuario,cargoUsuario;
+    ImageButton menu,agregarPedido,pedidos;
+    private String rolUsuario;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        nick=findViewById(R.id.nickUsuario);
+        nombreUsuario=findViewById(R.id.nombreUsuario);
+        apellidoUsuario=findViewById(R.id.apellidoUsuario);
+        cargoUsuario=findViewById(R.id.cargoUsuario);
+
+        recuperarPreferencias();
+
 
         cerrarSesion=findViewById(R.id.botonCerrarSesion);
         cerrarSesion.setOnClickListener(new View.OnClickListener()
@@ -87,5 +96,24 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+
+    private void recuperarPreferencias()
+    {
+        SharedPreferences preferences= getSharedPreferences("preferenciasLogin", Context.MODE_PRIVATE);
+        boolean sesion=preferences.getBoolean("sesion",false);
+        if(sesion)
+        {
+            this.rolUsuario=preferences.getString("rol", "No hay nada");
+            String cargo=preferences.getString("cargo", "No hay nada");
+            String apellido=preferences.getString("apellidos", "No hay nada");
+            String nombre=preferences.getString("nombres", "No hay nada");
+            String nickUsuario=preferences.getString("nick", "No hay nada");
+            nick.setText (nickUsuario);
+            nombreUsuario.setText(nombre);
+            apellidoUsuario.setText(apellido);
+            cargoUsuario.setText(cargo);
+        }
     }
 }

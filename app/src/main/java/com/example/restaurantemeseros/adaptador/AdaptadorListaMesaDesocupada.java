@@ -9,46 +9,49 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.interfaz.MesasFragment;
+
 import com.example.restaurantemeseros.mundo.Mesa;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa.ViewHolder> implements View.OnClickListener
-{
+public class AdaptadorListaMesaDesocupada  extends  RecyclerView.Adapter<AdaptadorListaMesaDesocupada.ViewHolder> implements View.OnClickListener{
+
     private Mesa proyecto;
     private ArrayList<Mesa> list;
     private MesasFragment buscarMesa;
     private Context contexto;
-    private static LayoutInflater  inflater = null;
+    private static LayoutInflater inflater = null;
     private View.OnClickListener listener;
-
-    public AdaptadorListaMesa(Context conexto, ArrayList<Mesa> lista)
-    {
-        this.list=lista;
-        this.contexto = conexto;
-        inflater = (LayoutInflater ) conexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    @Override
+    public void onClick(View v) {
+        if(listener!=null)
+        {
+            listener.onClick(v);
+        }
     }
-
-
+     public AdaptadorListaMesaDesocupada(Context conexto, ArrayList<Mesa> lista){
+         this.list=lista;
+         this.contexto = conexto;
+         inflater = (LayoutInflater ) conexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+     }
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-    {
-        View view = inflater.inflate(R.layout.fragment_lista_mesas, null);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.fragment_lista_mesas_desocupadas, null);
         view.setOnClickListener(this);
-        return new ViewHolder(view);
+        return new AdaptadorListaMesaDesocupada.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position)
-    {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         proyecto = this.list.get(position);
-
-        holder.txtNumeroMesa.setText(String.valueOf(list.get(position).getNumero()));
+        holder.txtNumeroMesaDesocupada.setText(String.valueOf(list.get(position).getNumero ()));
         holder.item.setTag (position);
         holder.item.setOnLongClickListener (new View.OnLongClickListener ()
         {
@@ -64,29 +67,14 @@ public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa
         });
     }
 
+
     @Override
-    public int getItemCount()
-    {
+    public int getItemCount() {
         return list.size();
     }
-
     public void setFragment(MesasFragment buscarMesa)
     {
         this.buscarMesa=buscarMesa;
-    }
-
-    @Override
-    public void onClick(View v)
-    {
-        if(listener!=null)
-        {
-            listener.onClick(v);
-        }
-    }
-
-    public void setOnclickListener(View.OnClickListener listener)
-    {
-        this.listener = listener;
     }
 
     public ArrayList<Mesa> getList()
@@ -94,18 +82,19 @@ public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa
         return this.list;
     }
 
-    public class ViewHolder  extends RecyclerView.ViewHolder
-    {
-        ConstraintLayout item;
-        TextView txtNumeroMesa;
 
-        public ViewHolder (@NonNull View itemView)
-        {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        ConstraintLayout item;
+        TextView txtNumeroMesaDesocupada;
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtNumeroMesa=(TextView) itemView.findViewById(R.id.txtNombrePlato);
-            item=(ConstraintLayout) itemView.findViewById (R.id.itemMesaOcupada);
+            txtNumeroMesaDesocupada=(TextView)itemView.findViewById(R.id.txtNombreMesaLibre);
+            item=(ConstraintLayout) itemView.findViewById (R.id.itemMesaDesocupada);
         }
     }
+    public void metodocualquiera()
+    {
+        //Este commit
 
-
+    }
 }

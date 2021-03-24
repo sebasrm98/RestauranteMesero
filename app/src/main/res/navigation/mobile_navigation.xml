@@ -25,6 +25,12 @@
         <action
             android:id="@+id/action_mesasFragment_to_platosMesaFragment"
             app:destination="@id/platosMesaFragment" />
+        <action
+            android:id="@+id/action_mesasFragment_to_listaMesasDesocupadasFragment"
+            app:destination="@id/listaMesasDesocupadasFragment" />
+        <action
+            android:id="@+id/action_mesasFragment_to_listaMesasDesocupadasFragment2"
+            app:destination="@id/listaMesasDesocupadasFragment" />
     </fragment>
     <fragment
         android:id="@+id/listaMesasFragment"
@@ -83,5 +89,10 @@
             android:id="@+id/action_listaMenuPlatoFragment_to_menuPlatosFragment"
             app:destination="@id/menuPlatosFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/listaMesasDesocupadasFragment"
+        android:name="com.example.restaurantemeseros.interfaz.ListaMesasDesocupadasFragment"
+        android:label="fragment_lista_mesas_desocupadas"
+        tools:layout="@layout/fragment_lista_mesas_desocupadas" />
 
 </navigation>

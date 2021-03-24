@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+       <KeyFrameSet>
+       </KeyFrameSet>
+        <OnSwipe
+            motion:touchAnchorId="@+id/imageView4"
+            motion:touchAnchorSide="bottom" />
+        <OnSwipe motion:touchAnchorId="@+id/linearLayout" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/scrollView3"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="369dp"
+            android:layout_height="271dp"
+            motion:layout_constraintTop_toBottomOf="@+id/searchBuscarPlato"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/linearLayout"
+            android:layout_width="406dp"
+            android:layout_height="339dp"
+            motion:layout_constraintTop_toBottomOf="@+id/scrollView3"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:alpha="1" />
+        <Constraint
+            android:id="@+id/scrollView4"
+            android:layout_width="412dp"
+            android:layout_height="251dp"
+            android:alpha="1"
+            motion:layout_constraintTop_toBottomOf="@+id/scrollView3" />
+        <Constraint
+            android:id="@+id/scrollView4"
+            android:layout_width="412dp"
+            android:layout_height="251dp"
+            android:alpha="1"
+            motion:layout_constraintTop_toBottomOf="@+id/scrollView3"
+            android:layout_marginTop="85dp" />
+    </ConstraintSet>
+</MotionScene>

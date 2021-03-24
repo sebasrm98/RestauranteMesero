@@ -138,7 +138,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         });
 
         numeroMesa = v.findViewById(R.id.numero_Mesa);
-        getParentFragmentManager().setFragmentResultListener("key", this, new FragmentResultListener() {
+        getParentFragmentManager ().setFragmentResultListener("key", this, new FragmentResultListener() {
             @Override
             public void onFragmentResult(@NonNull String key, @NonNull Bundle bundle)
             {

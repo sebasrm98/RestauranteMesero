@@ -9,13 +9,13 @@
 
     <ImageButton
         android:id="@+id/imageView4"
-        android:layout_width="413dp"
-        android:layout_height="646dp"
+        android:layout_width="452dp"
+        android:layout_height="619dp"
 
         android:scaleType="centerCrop"
         android:src="@mipmap/fondomdeso"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="-18dp" />
 
     <SearchView
         android:id="@+id/searchBuscarPlato"
@@ -55,6 +55,7 @@
         android:id="@+id/linearLayout"
         android:layout_width="412dp"
         android:layout_height="171dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/ventana_personalizada"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"

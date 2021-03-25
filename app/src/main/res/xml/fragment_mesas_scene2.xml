@@ -2,20 +2,39 @@
 <MotionScene 
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
-
     <Transition
         motion:constraintSetEnd="@+id/end"
-        motion:constraintSetStart="@id/start"
+        motion:constraintSetStart="@+id/start"
+
         motion:duration="1000">
-       <KeyFrameSet>
-       </KeyFrameSet>
-        <OnSwipe
-            motion:touchAnchorId="@+id/imageView4"
-            motion:touchAnchorSide="bottom" />
-        <OnSwipe motion:touchAnchorId="@+id/linearLayout" />
+
+
+        <KeyFrameSet >
+            <KeyTrigger
+                motion:motionTarget="@+id/imageView4"
+                motion:onCross="method" />
+        </KeyFrameSet>
+        <KeyFrameSet >
+            <KeyAttribute
+                motion:motionTarget="@+id/imageView4"
+                motion:framePosition="100" />
+        </KeyFrameSet>
+        <OnSwipe motion:touchAnchorId="@+id/linearLayout"
+            motion:dragDirection="dragUp"/>
+        <OnClick motion:targetId="@+id/linearLayout" />
+
+
     </Transition>
 
+
     <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:layout_width="452dp"
+            android:layout_height="619dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/imageView4"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/end">
@@ -33,7 +52,8 @@
             android:layout_height="339dp"
             motion:layout_constraintTop_toBottomOf="@+id/scrollView3"
             motion:layout_constraintStart_toStartOf="parent"
-            android:alpha="1" />
+            android:alpha="1"
+            android:layout_marginTop="8dp" />
         <Constraint
             android:id="@+id/scrollView4"
             android:layout_width="412dp"
@@ -48,4 +68,6 @@
             motion:layout_constraintTop_toBottomOf="@+id/scrollView3"
             android:layout_marginTop="85dp" />
     </ConstraintSet>
+
+
 </MotionScene>

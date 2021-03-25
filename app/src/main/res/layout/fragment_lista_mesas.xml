@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="118dp"
-        android:layout_height="101dp"
+        android:layout_height="115dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -28,8 +28,8 @@
 
         <ImageView
             android:id="@+id/imgPlatos"
-            android:layout_width="81dp"
-            android:layout_height="65dp"
+            android:layout_width="93dp"
+            android:layout_height="85dp"
             android:src="@mipmap/fbalon"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

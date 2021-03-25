@@ -35,7 +35,8 @@
             android:layout_width="381dp"
             motion:layout_constraintStart_toStartOf="parent"
             android:id="@+id/scrollView2"
-            motion:layout_constraintTop_toBottomOf="@+id/imageButton2" />
+            motion:layout_constraintTop_toBottomOf="@+id/imageButton2"
+            motion:layout_constraintEnd_toEndOf="parent" />
         <Constraint
             android:layout_height="38dp"
             motion:layout_constraintTop_toTopOf="parent"
@@ -121,9 +122,6 @@
     <Transition
         motion:constraintSetStart="@+id/start"
         motion:constraintSetEnd="@+id/menu" >
-
-
-        <OnClick motion:targetId="@+id/imageButton2" />
         <OnSwipe
             motion:touchAnchorId="@+id/imageView3"
             motion:dragDirection="dragDown" />

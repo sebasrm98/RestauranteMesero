@@ -8,15 +8,15 @@
     tools:context=".interfaz.ListaMesasDesocupadasFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="136dp"
-        android:layout_height="126dp"
+        android:layout_width="132dp"
+        android:layout_height="115dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/imageView17"
-            android:layout_width="100dp"
-            android:layout_height="99dp"
+            android:layout_width="84dp"
+            android:layout_height="85dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/mesadeso"
             app:layout_constraintEnd_toEndOf="parent"

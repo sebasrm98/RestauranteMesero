@@ -550,36 +550,42 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
     {
         final String[] miObservacion = {""};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
-        builder.setTitle("Title");
 
-        final EditText input = new EditText(getContext ());
+        LayoutInflater inflater= getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_observacion_plato,null);
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show ();
+
+
+        final EditText input =view.findViewById(R.id.editTextObsPlatos);
+        Button agregarObservacion=view.findViewById(R.id.btnAgrObs);
+        Button cancelar=view.findViewById(R.id.btnCancelar);
+
         input.setText (miPlato.getObsevacion ().isEmpty ()?"":miPlato.getObsevacion ());
-        input.setInputType(InputType.TYPE_CLASS_TEXT );
+        //input.setInputType(InputType.TYPE_CLASS_TEXT );
         builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener()
-        {
+        agregarObservacion.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(View view) {
                 miObservacion[0] = input.getText().toString();
                 miPlato.setObsevacion ( miObservacion[0]);
                 actuiizarPedido();
+                dialog.cancel();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener()
-        {
+        cancelar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(View view) {
                 dialog.cancel();
                 actuiizarPedido();
             }
         });
 
-        builder.show ();
-    }
 
+        dialog.show ();
+    }
     private void actuiizarPedido()
     {
         String data = new Gson().toJson (pedidoFactura.getPlatos ());

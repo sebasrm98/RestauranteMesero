@@ -69,6 +69,7 @@ public class AdaptadorListaPlatos extends  RecyclerView.Adapter<AdaptadorListaPl
                 return true;
             }
         });
+        holder.txtPrecioPlato.setText(String.valueOf(list.get(position).getPrecio()));
     }
     public ArrayList<Plato> getList()
     {

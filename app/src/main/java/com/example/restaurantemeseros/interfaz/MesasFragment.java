@@ -415,6 +415,7 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                         adaptadorListaMesaDesocupada.notifyDataSetChanged ();
                         adaptadorListaMesa.notifyDataSetChanged ();
                         dialog.cancel();
+                     //   getContext().getParentFragmentManager().popBackStack();
                     }
                 }, new Response.ErrorListener ()
                 {
@@ -426,7 +427,10 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                 });
                 int socketTimeout = 0;
                 requestQueue.add (jsonRequest);
+
             }
+
+
         });
 
 

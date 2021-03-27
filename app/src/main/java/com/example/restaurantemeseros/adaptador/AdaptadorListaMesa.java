@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa.ViewHolder> implements View.OnClickListener
 {
+    private final MesasFragment fragmentEvet;
     private Mesa proyecto;
     private ArrayList<Mesa> list;
     private MesasFragment buscarMesa;
@@ -26,12 +27,14 @@ public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa
     private static LayoutInflater  inflater = null;
     private View.OnClickListener listener;
 
-    public AdaptadorListaMesa(Context conexto, ArrayList<Mesa> lista)
+    public AdaptadorListaMesa(Context conexto, ArrayList<Mesa> lista, MesasFragment fragmentEvet)
     {
         this.list=lista;
         this.contexto = conexto;
         inflater = (LayoutInflater ) conexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.fragmentEvet = fragmentEvet;
     }
+
 
 
     @NonNull
@@ -50,6 +53,7 @@ public class AdaptadorListaMesa extends  RecyclerView.Adapter<AdaptadorListaMesa
 
         holder.txtNumeroMesa.setText(String.valueOf(list.get(position).getNumero()));
         holder.item.setTag (position);
+        holder.item.setOnDragListener (fragmentEvet);
         holder.item.setOnLongClickListener (new View.OnLongClickListener ()
         {
             @Override

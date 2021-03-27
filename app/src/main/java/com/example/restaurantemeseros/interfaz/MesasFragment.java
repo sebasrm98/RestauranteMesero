@@ -12,16 +12,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.InputType;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SearchView;
@@ -41,7 +40,6 @@ import com.example.restaurantemeseros.Abtract.InterfazFragamen;
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaMesa;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaMesaDesocupada;
-import com.example.restaurantemeseros.adaptador.VolleySingleton;
 import com.example.restaurantemeseros.mundo.Mesa;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -54,8 +52,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -129,7 +125,7 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
         this.mesasDesAux = new ArrayList<Mesa> ();
         this.mesas = new ArrayList<Mesa> ();
         this.mesasAux = new ArrayList<Mesa> ();
-        this.adaptadorListaMesa = new AdaptadorListaMesa (getContext (), this.mesas);
+        this.adaptadorListaMesa = new AdaptadorListaMesa (getContext (), this.mesas,this);
         this.listaMesas.setLayoutManager (new LinearLayoutManager (getContext ()));
         this.mesasDesocupadas.setLayoutManager (new GridLayoutManager (getContext (), 3));
         this.adaptadorListaMesaDesocupada = new AdaptadorListaMesaDesocupada (getContext (), this.mesasDes);
@@ -383,18 +379,24 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
     {
         final String[] miObservacion = {""};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
-        builder.setTitle("Title");
+        LayoutInflater inflater= getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_agregar_mesa,null);
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show ();
 
-        final TextView input = new EditText(getContext ());
-        input.setText ("¿Desea realizar un pedido en esta mesa?");
-        builder.setView(input);
-        final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
 
-        builder.setPositiveButton("Si", new DialogInterface.OnClickListener()
-        {
+
+        final TextView input = view.findViewById(R.id.txtAgregarMesa);
+        input.setText ("¿Desea realizar un pedido en la"+mesa.getNumero()+"?");
+        Button botonSiAgregar =view.findViewById(R.id.botonSiAgregar);
+        Button botonNoAgregar =view.findViewById(R.id.botonNoAgregar);
+
+       // final int finalPositionFuente = positionFuente;
+        botonSiAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(View view) {
+                final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put ("crearPedido", "true");
                 params.put ("idmesa", mesa.getIdmesa ()+"");
@@ -406,39 +408,37 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                     @Override
                     public void onResponse(JSONObject response)
                     {
-                        mesasAux.add(mesa);
                         loading.dismiss ();
-                        Toast.makeText (getContext (), "Pedido creado", Toast.LENGTH_SHORT).show ();
-                        replegarMesa();
-                        Bundle bundleEnvio = new Bundle ();
-                        bundleEnvio.putSerializable ("mesa", mesa);
-                        getParentFragmentManager ().setFragmentResult ("key", bundleEnvio);
+                        Toast.makeText (getContext (), "Pedido creado en la mesa "+ mesa.getIdmesa (), Toast.LENGTH_SHORT).show ();
+                        adaptadorListaMesa.getList ().add (mesa);
+                       // adaptadorListaMesaDesocupada.getList ().remove (finalPositionFuente);
+                        adaptadorListaMesaDesocupada.notifyDataSetChanged ();
+                        adaptadorListaMesa.notifyDataSetChanged ();
                         dialog.cancel();
                     }
-                }, new Response.ErrorListener () {
+                }, new Response.ErrorListener ()
+                {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace ();
+                        loading.dismiss ();
                     }
                 });
                 int socketTimeout = 0;
-                RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
-                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-                jsonRequest.setRetryPolicy (policy);
                 requestQueue.add (jsonRequest);
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-        {
+
+
+        botonNoAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which)
-            {
+            public void onClick(View view) {
                 dialog.cancel();
             }
         });
 
-        builder.show ();
+
+        dialog.show ();
     }
 
 
@@ -457,30 +457,36 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                 break;
             case DragEvent.ACTION_DROP:
 
-                int positionFuente = -1;
+                int positionFuente = -1 , posicionDestion=-1;
                 View viewSource = (View) event.getLocalState ();
                 RecyclerView RecyclerView = (RecyclerView) viewSource.getParent ();
                 positionFuente = (int) viewSource.getTag ();
 
-                if (RecyclerView.getAdapter () instanceof AdaptadorListaMesa)
+                if((RecyclerView.getAdapter () instanceof AdaptadorListaMesa)&&v.getId ()== R.id.listaMesasDesocupadas)
                 {
                     final AdaptadorListaMesa adaptadorListaMesa = (AdaptadorListaMesa) RecyclerView.getAdapter ();
                     final Mesa mesa = adaptadorListaMesa.getList ().get (positionFuente);
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
-                    builder.setTitle("Title");
-                    final TextView input = new TextView(getContext ());
+                    LayoutInflater inflater= getLayoutInflater();
+                    View view = inflater.inflate(R.layout.dialog_eliminar_mesa,null);
+                    builder.setView(view);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show ();
+
+                    final TextView input = view.findViewById(R.id.txtEliminarMesa);
+                    Button botonSi=view.findViewById(R.id.btnSiEliminar);
+                    Button botonNo=view.findViewById(R.id.btnEliminarNo);
                     input.setText ("¿Desea eliminar  el pedido de la mesa "+mesa.getIdmesa ()+"?");
                     builder.setView(input);
 
                     final int finalPositionFuente = positionFuente;
                     final int finalPositionFuente1 = positionFuente;
-                    builder.setPositiveButton("Si", new DialogInterface.OnClickListener()
-                    {
+
+                    botonSi.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(final DialogInterface dialog, int which)
-                        {
-                            final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
+                        public void onClick(View view) {
+                            final ProgressDialog loading = ProgressDialog.show(getContext (),"Eliminando pedido...","Espere por favor...",false,false);
                             Map<String, String> params = new HashMap<String, String>();
                             params.put ("eliminarUnPedido", "true");
                             params.put ("idmesa", mesa.getIdmesa ()+"");
@@ -497,6 +503,10 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                                     adaptadorListaMesa.getList ().remove (finalPositionFuente1);
                                     adaptadorListaMesaDesocupada.notifyDataSetChanged ();
                                     adaptadorListaMesa.notifyDataSetChanged ();
+                                    Bundle bundleEnvio = new Bundle ();
+
+                                    bundleEnvio.putSerializable ("mesa", null);
+                                    getParentFragmentManager ().setFragmentResult ("key", bundleEnvio);
 
                                     dialog.cancel();
                                 }
@@ -512,32 +522,83 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                             requestQueue.add (jsonRequest);
                         }
                     });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-                    {
+
+                    botonNo.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
+                        public void onClick(View view) {
                             dialog.cancel();
                         }
                     });
-                    builder.show ();
+                    dialog.show ();
 
-                } else if ((RecyclerView.getAdapter () instanceof AdaptadorListaMesaDesocupada))
+                }
+                if((RecyclerView.getAdapter () instanceof AdaptadorListaMesaDesocupada)&&v.getId ()== R.id.itemMesaOcupada)
+                {
+                    final Mesa mesaOrigen = adaptadorListaMesa.getList ().get (positionFuente);
+                    final Mesa mesaDestino = adaptadorListaMesaDesocupada.getList ().get (posicionDestion);
+                    final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put ("cambiarMesaPedio", "true");
+                    params.put ("idmesaOrigen", mesaOrigen.getIdmesa ()+"");
+                    params.put ("idmesaDestion", mesaDestino.getIdmesa ()+"");
+                    JSONObject parameters = new JSONObject (params);
+                    String url = "https://openm.co/consultas/pedidos.php";
+                    jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
+                    {
+                        @Override
+                        public void onResponse(JSONObject response)
+                        {
+                            /*loading.dismiss ();
+                            Toast.makeText (getContext (), "Pedido elminado de la "+ mesa.getIdmesa (), Toast.LENGTH_SHORT).show ();
+                            adaptadorListaMesaDesocupada.getList ().add (mesa);
+                            adaptadorListaMesa.getList ().remove (finalPositionFuente1);
+                            adaptadorListaMesaDesocupada.notifyDataSetChanged ();
+                            adaptadorListaMesa.notifyDataSetChanged ();
+                            Bundle bundleEnvio = new Bundle ();
+
+                            bundleEnvio.putSerializable ("mesa", null);
+                            getParentFragmentManager ().setFragmentResult ("key", bundleEnvio);
+
+                            dialog.cancel();*/
+                        }
+                    }, new Response.ErrorListener ()
+                    {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace ();
+                            loading.dismiss ();
+                        }
+                    });
+                    int socketTimeout = 0;
+                    requestQueue.add (jsonRequest);
+
+                }
+
+
+
+
+                else if ((RecyclerView.getAdapter () instanceof AdaptadorListaMesaDesocupada))
                 {
                     final AdaptadorListaMesaDesocupada adaptadorListaMesaDesocupada = (AdaptadorListaMesaDesocupada) RecyclerView.getAdapter ();
                     final Mesa  mesa = adaptadorListaMesaDesocupada.getList ().get (positionFuente);
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
-                    builder.setTitle("Title");
-                    final TextView input = new TextView(getContext ());
-                    input.setText ("¿Desea realizar un pedido en esta mesa?");
-                    builder.setView(input);
+                    LayoutInflater inflater= getLayoutInflater();
+                    View view = inflater.inflate(R.layout.dialog_agregar_mesa,null);
+                    builder.setView(view);
+                    final AlertDialog dialog = builder.create();
+                    dialog.show ();
+
+
+
+                    final TextView input = view.findViewById(R.id.txtAgregarMesa);
+                    input.setText ("¿Desea realizar un pedido en la "+mesa.getNumero()+"?");
+                    Button botonSiAgregar =view.findViewById(R.id.botonSiAgregar);
+                    Button botonNoAgregar =view.findViewById(R.id.botonNoAgregar);
 
                     final int finalPositionFuente = positionFuente;
-                    builder.setPositiveButton("Si", new DialogInterface.OnClickListener()
-                    {
+                    botonSiAgregar.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(final DialogInterface dialog, int which)
-                        {
+                        public void onClick(View view) {
                             final ProgressDialog loading = ProgressDialog.show(getContext (),"Creando pedido...","Espere por favor...",false,false);
                             Map<String, String> params = new HashMap<String, String>();
                             params.put ("crearPedido", "true");
@@ -570,15 +631,17 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                             requestQueue.add (jsonRequest);
                         }
                     });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-                    {
+
+
+                    botonNoAgregar.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which)
-                        {
+                        public void onClick(View view) {
                             dialog.cancel();
                         }
                     });
-                    builder.show ();
+
+
+                    dialog.show ();
                 }
                 break;
             case DragEvent.ACTION_DRAG_ENDED:

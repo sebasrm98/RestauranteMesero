@@ -73,6 +73,14 @@ public class AdaptadorListaPedidos extends  RecyclerView.Adapter<AdaptadorListaP
             }
         });
 
+        if (!list.get(position).getObsevacion ().isEmpty ())
+        {
+            holder.imgInfo.setVisibility (View.VISIBLE);
+        }else
+        {
+            holder.imgInfo.setVisibility (View.GONE);
+        }
+
     }
 
     @Override
@@ -102,7 +110,7 @@ public class AdaptadorListaPedidos extends  RecyclerView.Adapter<AdaptadorListaP
         ConstraintLayout item;
         TextView txtNombre,txtPrecio,txtCategoria,txtObservacion,txtCantidadPlato;
 
-        ImageView imgPlatos;
+        ImageView imgPlatos,imgInfo;
         public ViewHolder(@NonNull View itemView)
         {
             super(itemView);
@@ -111,6 +119,7 @@ public class AdaptadorListaPedidos extends  RecyclerView.Adapter<AdaptadorListaP
             txtCantidadPlato=(TextView) itemView.findViewById(R.id.txtCantidadPlato);
             imgPlatos=(ImageView) itemView.findViewById(R.id.imgPlatos);
             item=(ConstraintLayout) itemView.findViewById (R.id.itemPlatoPedido);
+            imgInfo=(ImageView) itemView.findViewById(R.id.imgInfo);
         }
     }
 

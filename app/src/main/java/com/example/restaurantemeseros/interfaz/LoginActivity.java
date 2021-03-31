@@ -19,6 +19,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.restaurantemeseros.R;
+import com.example.restaurantemeseros.adaptador.Servidor;
 import com.example.restaurantemeseros.mundo.Usuario;
 
 
@@ -63,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                     parametros.put("contrasena",contrasena);
                     JSONObject parameters = new JSONObject(parametros);
 
-                    String url="https://openm.co/consultas/buscarUsuario.php";
+                    String url= Servidor.HOST+"/consultas/buscarUsuario.php";
                     jsonRequest=new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
                     {
                         @Override

@@ -39,6 +39,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaPedidos;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaPlatos;
+import com.example.restaurantemeseros.adaptador.Servidor;
 import com.example.restaurantemeseros.adaptador.VolleySingleton;
 import com.example.restaurantemeseros.mundo.Factura;
 import com.example.restaurantemeseros.mundo.Mesa;
@@ -80,6 +81,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
     private ImageButton btnActualizarPedido, animacionMesas;
     private ImageButton factura;
     private Dialog mDialog;
+    private int idMesa;
 
 
 
@@ -102,11 +104,11 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         View v = inflater.inflate(R.layout.fragment_platos_mesa, container, false);
         this.pedidoFactura = new Factura();
         this.listaPedidos = v.findViewById(R.id.lista_pedidos);
-        animacionMesas= v.findViewById(R.id.imageButton);
+      //  animacionMesas= v.findViewById(R.id.imageButton);
       //  this.factura = v.findViewById(R.id.imagenFactura);
         this.requestQueue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-        this.adaptadorListaPedidos = new AdaptadorListaPedidos(getContext(), this.pedidoFactura.getPlatos());
-        this.listaPedidos.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        this.adaptadorListaPedidos = new AdaptadorListaPedidos(getContext(), this.pedidoFactura.getPedidos ());
+        this.listaPedidos.setLayoutManager(new GridLayoutManager(getContext(), 2));
         this.listaPedidos.setAdapter(this.adaptadorListaPedidos);
         this.btnActualizarPedido = v.findViewById(R.id.btnActualizarPedido);
 /*
@@ -118,21 +120,16 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
             }
         });*/
 
-        animacionMesas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(v).navigate(R.id.mesasFragment);
 
-            }
-        });
         this.adaptadorListaPedidos.setOnclickListener (new View.OnClickListener ()
         {
             @Override
             public void onClick(View v)
             {
-                Plato plato= pedidoFactura.getPlatos().get (listaPedidos.getChildAdapterPosition (v));
-
-                crearObservacion((Pedido) plato);
+                Pedido miPedido= pedidoFactura.getPedidos ().get (listaPedidos.getChildAdapterPosition (v));
+                //  Pedido miPedido=pedidoFactura.buscarPedido(listaPedidos.getChildAdapterPosition(v));
+                Toast.makeText(getContext(),listaPedidos.getChildAdapterPosition(v)+"" , Toast.LENGTH_SHORT).show();
+                crearObservacion(miPedido);
 
             }
         });
@@ -151,7 +148,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                     Toast.makeText(getContext(), "" + idmesa, Toast.LENGTH_SHORT).show();
                     params.put("buscarPlatoMesa", idmesa + "");
                     JSONObject parameters = new JSONObject(params);
-                    String url = "http://openm.co/consultas/pedidos.php";
+                    String url = Servidor.HOST+"/consultas/pedidos.php";
 
                     jsonRequest = new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
                         @Override
@@ -196,28 +193,38 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                                     for (int i = 0; i < datos.length() && !nombrePlato.equals ("null"); i++)
                                     {
                                         JSONObject plato = datos.getJSONObject(i);
-                                        int pedidos_cantidad = plato.getInt("pedidos_cantidad");
-                                        String platos_imagen = plato.getString("platos_imagen");
-                                        double platos_precio = plato.getDouble("platos_precio");
-                                        String platos_descripcion = plato.getString("platos_descripcion");
-                                        String platos_nombre = plato.getString("platos_nombre");
-                                        String platos_categoria = plato.getString("platos_categoria");
-                                        int platos_idplatos = plato.getInt("platos_idplatos");
-                                        String pedidos_observacion = plato.getString("pedidos_observacion");
 
-                                        Toast.makeText(getContext(), plato.getString("mesas_numero"), Toast.LENGTH_SHORT).show();
+                                        int pedidos_cantidad = 0;
+                                        double platos_precio=0;
+                                        int platos_idplatos=0;
+                                        try {
+                                            pedidos_cantidad = plato.getInt("pedidos_cantidad");
+                                            platos_precio = plato.getDouble("platos_precio");
+                                            platos_idplatos = plato.getInt("platos_idplatos");
+                                            String platos_imagen = plato.getString("platos_imagen");
+                                            String platos_descripcion = plato.getString("platos_descripcion");
+                                            String platos_nombre = plato.getString("platos_nombre");
+                                            String platos_categoria = plato.getString("platos_categoria");
+                                            String pedidos_observacion = plato.getString("pedidos_observacion");
 
-                                        Pedido pedidoDatos = new Pedido (
-                                                platos_idplatos,
-                                                platos_categoria,
-                                                platos_nombre,
-                                                platos_descripcion,
-                                                platos_precio,
-                                                platos_imagen,
-                                                pedidos_cantidad
-                                        );
-                                        pedidoDatos.setObsevacion (pedidos_observacion);
-                                        pedidoFactura.agregarPedido (pedidoDatos);
+
+                                            Pedido pedidoDatos = new Pedido (
+                                                    platos_idplatos,
+                                                    platos_categoria,
+                                                    platos_nombre,
+                                                    platos_descripcion,
+                                                    platos_precio,
+                                                    platos_imagen,
+                                                    pedidos_cantidad
+                                            );
+                                            pedidoDatos.setObsevacion (pedidos_observacion);
+                                            pedidoFactura.agregarPedido (pedidoDatos);
+                                        }catch (Exception e){
+                                            pedidos_cantidad = 0;
+                                            platos_precio=0;
+                                            platos_idplatos=0;
+                                        }
+
                                     }
 
                                 }
@@ -234,8 +241,10 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                         }
                     });
                     requestQueue.add(jsonRequest);
-                }else
+                    idMesa=mesa.getIdmesa();
+                }else if(!(mesa instanceof Mesa))
                 {
+                    numeroMesa.setText("Seleccione una mesa");
                     pedidoFactura.limpiarLista ();
                     adaptadorListaPedidos.notifyDataSetChanged ();
                 }
@@ -245,138 +254,11 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         this.listaPedidos.setOnDragListener(this);
         this.btnActualizarPedido.setOnDragListener(this);
 
-       /* Dexter.withActivity(getActivity ()).withPermission (Manifest.permission.WRITE_EXTERNAL_STORAGE).withListener(new PermissionListener ()
-        {
 
-            public void onPermissionGranted(PermissionGrantedResponse response)
-            {
-                factura.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        crearPDF(common.getRutaRaiz(getContext ())+"ticket.pdf");
-                    }
-                });
-            }
-
-            public void onPermissionDenied(PermissionDeniedResponse response){}
-
-            public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token){}
-        }).check ();*/
         return v;
 
     }
-  /*  private void crearPDF(String path)
-    {
-        if (new File(path).exists ())
-        {
-            new File (path).delete ();
-        }
-        try
-        {
-            NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.getDefault());
-            SimpleDateFormat format=new SimpleDateFormat ("dd/MM/yyyy");
-            Document document=new Document ();
-            PdfWriter.getInstance (document, new FileOutputStream(path));
-            document.open ();
-            document.setPageSize (PageSize.NOTE);
-            document.addCreationDate ();
-            document.addAuthor ("Open");
-            document.addAuthor ("user");
-            BaseColor color=new BaseColor (0,153,204,255);
-            float fontSize=20.0f;
-            float valueFontSize=20.0f;
-            double total=0;
-            BaseFont fontName= BaseFont.createFont ("assets/fonts/Brandon_medium.otf","UTF-8",BaseFont.EMBEDDED);
-            Font titulo=new Font (fontName,36.0f,Font.NORMAL,BaseColor.BLACK);
-            addItem(document,"Orden pedido", Element.ALIGN_CENTER,titulo);
 
-            Font numeroOrden=new Font (fontName,fontSize,Font.NORMAL,color);
-            addItem(document,"Pedido no.", Element.ALIGN_LEFT,numeroOrden);
-
-            Font numeroValorOrden=new Font (fontName,valueFontSize,Font.NORMAL,BaseColor.BLACK);
-            addItem(document,"#"+this.pedidoFactura.getFactura_idfacturas (), Element.ALIGN_LEFT,numeroValorOrden);
-            agregarLinea(document);
-
-            addItem(document,"Fecha de pedido", Element.ALIGN_LEFT,numeroOrden);
-            addItem(document,format.format (pedidoFactura.getFactura_fecha ()), Element.ALIGN_LEFT,numeroValorOrden);
-            agregarLinea(document);
-
-            addItem(document,"Nombre de la cuenta", Element.ALIGN_LEFT,numeroOrden);
-            addItem(document,"User", Element.ALIGN_LEFT,numeroValorOrden);
-            agregarLinea(document);
-            agregarEspacio (document);
-            addItem (document,"Detalle de los plato",Element.ALIGN_LEFT,titulo);
-            agregarLinea(document);
-            for (Pedido pedido: pedidoFactura.getPlatos ())
-            {
-                addItemleft (document,pedido.getNombre (),"",titulo,numeroValorOrden);
-                total+=pedido.getTotal();
-                addItemleft (document,pedido.getCantidad ()+"*"+nf.format(pedido.getPrecio ()),nf.format(pedido.getTotal())+"",titulo,numeroValorOrden);
-                agregarLinea(document);
-            }
-
-            agregarLinea(document);
-            agregarEspacio (document);
-            addItemleft (document,"Total",nf.format(total)+"",titulo,numeroValorOrden);
-            document.close ();
-            imprimiPDF();
-
-        }catch (FileNotFoundException e)
-        {
-            e.printStackTrace ();
-        } catch (DocumentException e)
-        {
-            e.printStackTrace ();
-        } catch (IOException e)
-        {
-            e.printStackTrace ();
-        }
-    }
-
-    private void imprimiPDF()
-    {
-        PrintManager printManager=(PrintManager)getContext ().getSystemService (Context.PRINT_SERVICE);
-        try{
-            PrintDocumentAdapter adapter=new PDFAdapter (getContext (),common.getRutaRaiz(getContext ())+"ticket.pdf");
-            printManager.print ("Document",adapter, new PrintAttributes.Builder ().build ());
-        }catch (Exception exception)
-        {
-            exception.printStackTrace ();
-        }
-    }
-
-    private void addItemleft(Document document, String textLeft, String textRight, Font left, Font right) throws DocumentException
-    {
-        Chunk chunkLeft=new Chunk (textLeft,left);
-        Chunk chunkRight=new Chunk (textRight ,right);
-        Paragraph paragraph=new Paragraph (chunkLeft);
-        paragraph.add (new Chunk ( new VerticalPositionMark ()));
-        paragraph.add (chunkRight);
-        document.add(paragraph);
-    }
-
-    private void agregarLinea(Document document) throws DocumentException
-    {
-        LineSeparator separator=new LineSeparator ();
-        separator.setLineColor (new BaseColor (0,0,0,68));
-        agregarEspacio(document);
-        document.add (new Chunk (separator));
-        agregarEspacio(document);
-    }
-
-    private void agregarEspacio(Document document) throws DocumentException
-    {
-        document.add (new Paragraph (""));
-    }
-
-    private void addItem(Document document, String oreden_detalle, int alignCenter, Font titulo) throws DocumentException {
-        Chunk chunk=new Chunk (oreden_detalle,titulo);
-        Paragraph paragraph=new Paragraph (chunk);
-        paragraph.setAlignment (alignCenter);
-        document.add(paragraph);
-    }*/
 
     @Override
     public boolean onDrag(View v, DragEvent event)
@@ -407,16 +289,16 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
 
                         if (miPlato instanceof Pedido)
                         {
-                            crearObservacion(miPlato);
+
                             miPlato.setCantidad (miPlato.getCantidad () + 1);
                         } else
                         {
                             Pedido pedido=plato.converAPedido ();
                             pedido.setCantidad (1);
-
                             pedidoFactura.agregarPedido ( pedido);
-                            actuiizarPedido();
+                          //  actuiizarPedido();
                         }
+                        actuiizarPedido();
                         v.setVisibility (View.VISIBLE);
                     }else if ((RecyclerView.getAdapter () instanceof AdaptadorListaPedidos)&&v.getId ()== R.id.btnActualizarPedido)
                     {
@@ -456,7 +338,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
                                         params.put ("idplato", plato.getIdplato ()+"");
                                         params.put ("idfactura", pedidoFactura.getFactura_idfacturas () + "");
                                         JSONObject parameters = new JSONObject (params);
-                                        String url = "http://openm.co/consultas/pedidos.php";
+                                        String url = Servidor.HOST+"/consultas/pedidos.php";
 
                                         jsonRequest = new JsonObjectRequest (Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
                                         {
@@ -553,7 +435,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         return true;
     }
 
-    private void crearObservacion(final Pedido miPlato)
+    private void crearObservacion(final Pedido miPedido)
     {
         final String[] miObservacion = {""};
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext ());
@@ -568,8 +450,8 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
         final EditText input =view.findViewById(R.id.editTextObsPlatos);
         Button agregarObservacion=view.findViewById(R.id.btnAgrObs);
         Button cancelar=view.findViewById(R.id.btnCancelar);
+        input.setText (miPedido.getObsevacion ().isEmpty ()?"":miPedido.getObsevacion ());
 
-        input.setText (miPlato.getObsevacion ().isEmpty ()?"":miPlato.getObsevacion ());
         //input.setInputType(InputType.TYPE_CLASS_TEXT );
         builder.setView(input);
 
@@ -577,8 +459,7 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
             @Override
             public void onClick(View view) {
                 miObservacion[0] = input.getText().toString();
-                miPlato.setObsevacion ( miObservacion[0]);
-                actuiizarPedido();
+                crearObservacionPedido(miPedido.getIdplato(), miObservacion[0]);
                 dialog.cancel();
             }
         });
@@ -586,23 +467,50 @@ public class PlatosMesaFragment extends Fragment implements View.OnDragListener{
             @Override
             public void onClick(View view) {
                 dialog.cancel();
-                actuiizarPedido();
+
             }
         });
 
 
         dialog.show ();
     }
+
+
+    private void crearObservacionPedido( int idPedido, String miObservacion)
+    {
+        HashMap<String, String> params = new HashMap<String, String> ();
+        params.put ("crearObservacion", "true");
+        params.put ("idfactura", pedidoFactura.getFactura_idfacturas () + "");
+        params.put ("idPedido", idPedido + "");
+        params.put ("miObservacion", miObservacion);
+        JSONObject parameters = new JSONObject (params);
+
+        String url = Servidor.HOST +"/consultas/pedidos.php";
+
+        jsonRequest = new JsonObjectRequest (Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
+        {
+            @Override
+            public void onResponse(JSONObject response) {
+                Toast.makeText (getContext (), "Observación creada exitosamente", Toast.LENGTH_SHORT).show ();
+            }
+        }, new Response.ErrorListener () {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace ();
+            }
+        });
+        requestQueue.add (jsonRequest);
+    }
     private void actuiizarPedido()
     {
-        String data = new Gson().toJson (pedidoFactura.getPlatos ());
+        String data = new Gson ().toJson (pedidoFactura.getPedidos ());
 
         HashMap<String, String> params = new HashMap<String, String> ();
         params.put ("modidificarListaPedido", data);
         params.put ("idfactura", pedidoFactura.getFactura_idfacturas () + "");
         JSONObject parameters = new JSONObject (params);
 
-        String url = "http://openm.co/consultas/pedidos.php";
+        String url = Servidor.HOST+"/consultas/pedidos.php";
 
         jsonRequest = new JsonObjectRequest (Request.Method.POST, url, parameters, new Response.Listener<JSONObject> ()
         {

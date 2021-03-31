@@ -8,9 +8,8 @@
     tools:context=".interfaz.PresentacionActivity">
 
     <LinearLayout
-        android:layout_width="105dp"
-        android:layout_height="97dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="125dp"
+        android:layout_height="96dp"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,8 +22,8 @@
 
             <ImageView
                 android:id="@+id/imgPlatosMenu"
-                android:layout_width="106dp"
-                android:layout_height="98dp"
+                android:layout_width="127dp"
+                android:layout_height="94dp"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/tacos"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -33,8 +32,8 @@
                 app:srcCompat="@mipmap/tacos" />
 
             <LinearLayout
-                android:layout_width="105dp"
-                android:layout_height="18dp"
+                android:layout_width="123dp"
+                android:layout_height="36dp"
                 android:background="#B9505050"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -49,8 +48,8 @@
 
                     <TextView
                         android:id="@+id/txtNombrePlatoMenu"
-                        android:layout_width="107dp"
-                        android:layout_height="18dp"
+                        android:layout_width="121dp"
+                        android:layout_height="35dp"
                         android:text="Nombre plato"
                         android:textColor="#FBFAFA"
                         android:textSize="14sp"
@@ -61,8 +60,8 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="105dp"
-                android:layout_height="22dp"
+                android:layout_width="123dp"
+                android:layout_height="24dp"
                 android:background="#9A5C5B5B"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/imgPlatosMenu"

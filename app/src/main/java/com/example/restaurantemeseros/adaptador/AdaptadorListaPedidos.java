@@ -32,10 +32,11 @@ public class AdaptadorListaPedidos extends  RecyclerView.Adapter<AdaptadorListaP
     private static LayoutInflater  inflater = null;
     private View.OnClickListener listener;
 
-    public AdaptadorListaPedidos(Context conexto, ArrayList<Pedido> lista)
+    public AdaptadorListaPedidos(Context contexto, ArrayList<Pedido> lista)
     {
         this.list=lista;
-        inflater = (LayoutInflater ) conexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.contexto = contexto;
+        inflater = LayoutInflater.from(contexto);
     }
 
 

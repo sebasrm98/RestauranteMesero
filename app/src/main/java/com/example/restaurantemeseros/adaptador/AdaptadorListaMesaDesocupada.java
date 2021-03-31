@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class AdaptadorListaMesaDesocupada  extends  RecyclerView.Adapter<AdaptadorListaMesaDesocupada.ViewHolder> implements View.OnClickListener{
 
+    private final MesasFragment eventfragment;
     private Mesa proyecto;
     private ArrayList<Mesa> list;
     private MesasFragment buscarMesa;
@@ -35,9 +36,10 @@ public class AdaptadorListaMesaDesocupada  extends  RecyclerView.Adapter<Adaptad
             listener.onClick(v);
         }
     }
-     public AdaptadorListaMesaDesocupada(Context conexto, ArrayList<Mesa> lista){
+     public AdaptadorListaMesaDesocupada(Context conexto, ArrayList<Mesa> lista, MesasFragment eventfragment){
          this.list=lista;
          this.contexto = conexto;
+         this.eventfragment=eventfragment;
          inflater = (LayoutInflater ) conexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
      }
     @NonNull
@@ -58,6 +60,7 @@ public class AdaptadorListaMesaDesocupada  extends  RecyclerView.Adapter<Adaptad
             @Override
             public boolean onLongClick(View view)
             {
+                eventfragment.onStop();
                 ClipData data = ClipData.newPlainText("", "");
                 View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                 view.startDrag(data, shadowBuilder, view, 0);

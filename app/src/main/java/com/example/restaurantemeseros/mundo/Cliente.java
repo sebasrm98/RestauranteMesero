@@ -21,7 +21,7 @@ public class Cliente
     {
         this.idClientes = idclientes;
         this.indentificacion = indentificacion;
-        this.nombres  = nombres;
+        this.nombres = nombres;
         this.apellidos = apellidos;
     }
 

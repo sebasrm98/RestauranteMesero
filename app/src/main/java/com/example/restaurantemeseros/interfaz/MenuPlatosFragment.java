@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.example.restaurantemeseros.R;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaPedidos;
 import com.example.restaurantemeseros.adaptador.AdaptadorListaPlatos;
+import com.example.restaurantemeseros.adaptador.Servidor;
 import com.example.restaurantemeseros.adaptador.VolleySingleton;
 import com.example.restaurantemeseros.mundo.Factura;
 import com.example.restaurantemeseros.mundo.Plato;
@@ -97,9 +98,9 @@ public class MenuPlatosFragment extends Fragment implements View.OnDragListener 
         this.requestQueue =  VolleySingleton.getInstance(getContext ()).getRequestQueue();
         this.platosMenu = new ArrayList<Plato>();
         this.adaptadorListaPlatos = new AdaptadorListaPlatos(getContext (),this.platosMenu);
-        this.adaptadorListaPedidos = new AdaptadorListaPedidos(getContext (),this.pedidoFactura.getPlatos ());
+        this.adaptadorListaPedidos = new AdaptadorListaPedidos(getContext(), this.pedidoFactura.getPedidos ());
 
-        this.listaPlatos.setLayoutManager(new GridLayoutManager(getContext(),3));
+        this.listaPlatos.setLayoutManager(new GridLayoutManager(getContext(),2));
         this.listaPlatos.setAdapter(this.adaptadorListaPlatos);
         this.listaPlatos.setOnDragListener(this);
 
@@ -126,7 +127,7 @@ public class MenuPlatosFragment extends Fragment implements View.OnDragListener 
         Map<String,String> params= new HashMap<String, String>();
         params.put("buscarPlatos",platoNombre);
         JSONObject parameters = new JSONObject(params);
-        String url="http://openm.co/consultas/platos.php";
+        String url= Servidor.HOST+"/consultas/platos.php";
         jsonRequest=new JsonObjectRequest(Request.Method.POST, url, parameters, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

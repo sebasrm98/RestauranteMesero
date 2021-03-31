@@ -11,8 +11,8 @@
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_nav_home_to_platosMesaFragment"
-            app:destination="@id/platosMesaFragment" />
+            android:id="@+id/action_nav_home_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
     </fragment>
     <fragment
         android:id="@+id/mesasFragment"
@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_mesasFragment_to_listaMesasDesocupadasFragment2"
             app:destination="@id/listaMesasDesocupadasFragment" />
+        <action
+            android:id="@+id/action_mesasFragment_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
     </fragment>
     <fragment
         android:id="@+id/listaMesasFragment"
@@ -56,8 +59,8 @@
             android:id="@+id/action_platosMesaFragment_to_mesasFragment"
             app:destination="@id/mesasFragment" />
         <action
-            android:id="@+id/action_platosMesaFragment_to_nav_home"
-            app:destination="@id/nav_home" />
+            android:id="@+id/action_platosMesaFragment_to_pedidosMesasFragment"
+            app:destination="@id/pedidosMesasFragment" />
     </fragment>
     <fragment
         android:id="@+id/listaPedidosPlatosFragment"
@@ -94,5 +97,20 @@
         android:name="com.example.restaurantemeseros.interfaz.ListaMesasDesocupadasFragment"
         android:label="fragment_lista_mesas_desocupadas"
         tools:layout="@layout/fragment_lista_mesas_desocupadas" />
+    <fragment
+        android:id="@+id/pedidosMesasFragment"
+        android:name="com.example.restaurantemeseros.interfaz.PedidosMesasFragment"
+        android:label="fragment_pedidos_mesas"
+        tools:layout="@layout/fragment_pedidos_mesas" >
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_mesasFragment"
+            app:destination="@id/mesasFragment" />
+        <action
+            android:id="@+id/action_pedidosMesasFragment_to_platosMesaFragment"
+            app:destination="@id/platosMesaFragment" />
+    </fragment>
 
 </navigation>

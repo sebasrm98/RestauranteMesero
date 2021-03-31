@@ -5,10 +5,6 @@
  */
 package com.example.restaurantemeseros.mundo;
 
-import android.os.Parcelable;
-
-import java.io.Serializable;
-
 /**
  *
  * @author Crendon

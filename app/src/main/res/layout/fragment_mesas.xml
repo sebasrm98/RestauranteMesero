@@ -19,11 +19,10 @@
 
     <SearchView
         android:id="@+id/searchBuscarPlato"
-        android:layout_width="182dp"
-        android:layout_height="32dp"
+        android:layout_width="184dp"
+        android:layout_height="0dp"
         android:background="#8AAF0202"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintBottom_toTopOf="@+id/imageView4">
 
         <LinearLayout
             android:id="@+id/linearLayout3"
@@ -36,6 +35,7 @@
         android:id="@+id/scrollView3"
         android:layout_width="171dp"
         android:layout_height="261dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBuscarPlato">
 
@@ -106,8 +106,8 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="180dp"
-        android:layout_height="274dp"
+        android:layout_width="182dp"
+        android:layout_height="311dp"
         android:background="@drawable/ventana_personalizada"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,8 +119,8 @@
 
             <ScrollView
                 android:id="@+id/scrollView4"
-                android:layout_width="173dp"
-                android:layout_height="245dp"
+                android:layout_width="180dp"
+                android:layout_height="311dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -132,7 +132,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/listaMesasDesocupadas"
                         android:layout_width="match_parent"
-                        android:layout_height="239dp"
+                        android:layout_height="315dp"
                         android:visibility="visible">
 
                     </androidx.recyclerview.widget.RecyclerView>

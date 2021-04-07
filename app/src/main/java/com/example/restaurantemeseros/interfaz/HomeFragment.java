@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
         agregarPedido.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.pedidosMesasFragment);
+                Navigation.findNavController(v).navigate(R.id.platosMesaFragment);
             }
         });
 

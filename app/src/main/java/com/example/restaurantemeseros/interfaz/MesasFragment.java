@@ -247,6 +247,7 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                 String datos = result.getContents().trim ();
                 System.out.println (datos.replace ("tel:",""));
                 buscarMesa(datos.replace ("tel:",""));
+
             }
         }
     }
@@ -277,10 +278,16 @@ public class MesasFragment extends BottomSheetDialogFragment  implements View.On
                         String codigoQR = mesa.getString ("codigoQR");
                         Mesa m = new Mesa (id, numero, codigoQR, estado);
                         crearPedido(m);
-                    }else
+
+
+                   }else
                     {
                         Toast.makeText(getContext(), "La mesa esta ocupada", Toast.LENGTH_LONG).show();
                     }
+
+
+
+
                 } catch (JSONException e) {
                     e.printStackTrace ();
                 }

@@ -16,57 +16,57 @@
             android:layout_width="68dp"
             android:id="@+id/btnActualizarPedido"
             motion:layout_constraintTop_toBottomOf="@+id/scrollView2"
-            motion:layout_constraintStart_toEndOf="@+id/linearLayout2" />
+            motion:layout_constraintEnd_toEndOf="@+id/imageView3"
+            motion:layout_editor_absoluteX="272dp" />
         <Constraint
-            android:layout_height="454dp"
-            android:layout_width="256dp"
+            android:layout_height="479dp"
+            android:layout_width="386dp"
             motion:layout_constraintStart_toStartOf="parent"
             android:id="@+id/scrollView2"
             motion:layout_constraintTop_toBottomOf="@+id/imageButton2"
             android:layout_marginStart="16dp"
             motion:layout_constraintEnd_toEndOf="@+id/imageView3"
-            android:layout_marginEnd="8dp" />
+            android:layout_marginEnd="8dp"
+            motion:layout_editor_absoluteX="-47dp" />
         <Constraint
-            android:layout_height="49dp"
-            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_width="149dp"
             android:id="@+id/linearLayout2"
             motion:layout_constraintTop_toBottomOf="@+id/scrollView2"
-            motion:layout_editor_absoluteY="595dp"
-            motion:layout_constraintStart_toStartOf="parent" />
+            motion:layout_constraintEnd_toStartOf="@+id/btnActualizarPedido"
+            motion:layout_editor_absoluteX="194dp" />
+        <Constraint
+            android:layout_height="40dp"
+            android:layout_width="170dp"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/fragment6"
+            motion:layout_constraintTop_toBottomOf="@+id/imageView13" />
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
-        <Constraint
-            android:layout_height="86dp"
-            android:layout_width="89dp"
-            motion:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/imageButton2"
-            android:layout_marginLeft="12dp"
-            android:layout_marginStart="12dp"
-            motion:layout_constraintBottom_toTopOf="@+id/imageView3" />
-    </ConstraintSet>
+
     <ConstraintSet android:id="@+id/menu" >
         <Constraint
-            android:layout_height="307dp"
-            android:layout_width="294dp"
+            android:layout_height="330dp"
+            android:layout_width="411dp"
             motion:layout_constraintStart_toStartOf="parent"
             android:id="@+id/imageView3"
             motion:layout_constraintTop_toBottomOf="@+id/fragment3" />
         <Constraint
-            android:layout_width="294dp"
-            android:layout_height="304dp"
+            android:layout_width="411dp"
+            android:layout_height="302dp"
             motion:layout_constraintStart_toStartOf="parent"
             android:id="@+id/fragment3"
             motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:layout_height="230dp"
             motion:layout_constraintTop_toTopOf="@+id/imageView3"
-            android:layout_width="283dp"
+            android:layout_width="397dp"
             android:id="@+id/scrollView2"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="@+id/imageView3"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="16dp" />
+            android:layout_marginStart="16dp"
+            motion:layout_editor_absoluteX="-46dp" />
         <Constraint
             android:layout_height="86dp"
             android:layout_width="89dp"
@@ -95,7 +95,15 @@
         <OnSwipe
             motion:touchAnchorId="@+id/imageView3"
             motion:dragDirection="dragDown" />
+        <OnClick motion:targetId="@+id/fragment6" />
 
     </Transition>
+    <ConstraintSet android:id="@+id/mesas" />
+    <Transition
+        motion:constraintSetStart="@+id/start"
+        motion:constraintSetEnd="@+id/mesas" >
+        <OnClick motion:targetId="@+id/fragment6" />
+    </Transition>
+
 
 </MotionScene>

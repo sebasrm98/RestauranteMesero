@@ -29,8 +29,8 @@
 
     <ConstraintSet android:id="@+id/start">
         <Constraint
-            android:layout_width="195dp"
-            android:layout_height="611dp"
+            android:layout_width="182dp"
+            android:layout_height="656dp"
             motion:layout_constraintTop_toTopOf="parent"
             android:id="@+id/imageView4"
             motion:layout_constraintStart_toStartOf="parent" />
